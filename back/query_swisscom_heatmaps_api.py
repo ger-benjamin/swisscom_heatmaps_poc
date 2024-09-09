@@ -3,13 +3,15 @@ from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta
 import pprint
 
+from env import CLIENT_CRED
+
 BASE_URL = "https://api.swisscom.com/layer/heatmaps/demo"
 TOKEN_URL = "https://consent.swisscom.com/o/oauth2/token"
 MAX_NB_TILES_REQUEST = 100
 headers = {"scs-version": "2"}  # API version
 
-client_id = ""  # customer key in the Swisscom digital market place
-client_secret = ""  # customer secret in the Swisscom digital market place
+client_id = CLIENT_CRED['ID']  # customer key in the Swisscom digital market place
+client_secret = CLIENT_CRED['SECRET']  # customer secret in the Swisscom digital market place
 
 # Fetch an access token
 client = BackendApplicationClient(client_id=client_id)
@@ -27,7 +29,7 @@ tile_ids = [t["tileId"] for t in muni_tiles_json["tiles"]][
 ]
 
 # define a start time and request the density for the following given number of hours
-start_time = datetime(year=2020, month=1, day=27, hour=0, minute=0)
+start_time = datetime(year=2022, month=10, day=10, hour=0, minute=0)
 dates = [(start_time + timedelta(hours=delta)) for delta in range(24)]
 date2score = dict()
 
@@ -38,10 +40,13 @@ for dt in dates:
         + "?tiles="
         + "&tiles=".join(map(str, tile_ids))
     )
+    result = oauth.get(api_request, headers=headers)
+    print(result.status_code)
+    print(result.json())
     daily_total_density = sum(
         map(
             lambda t: t["score"],
-            oauth.get(api_request, headers=headers).json()["tiles"],
+            result.json()["tiles"],
         )
     )
     date2score[dt.isoformat()] = daily_total_density

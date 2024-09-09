@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Swisscom POC heatmap</title>
+    <link rel="stylesheet" href="../../node_modules/ol/ol.css" />
+    <link rel="stylesheet" href="../common.css" />
+    <link rel="stylesheet" href="./heatmap.css" />
+  </head>
+  <body>
+    <p>Simple heatmap example.</p>
+    <div id="map"></div>
+    <form>
+      <label for="radius">radius size</label>
+      <input id="radius" type="range" min="1" max="50" step="1" value="5" />
+      <label for="blur">blur size</label>
+      <input id="blur" type="range" min="1" max="50" step="1" value="15" />
+    </form>
+    <div id="console">
+      <p class="title">Output message:</p>
+      <p class="text"></p>
+    </div>
+    <script type="module" src="./heatmap.ts"></script>
+  </body>
+</html>

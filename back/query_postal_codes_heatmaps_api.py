@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
+from env import CLIENT_CRED
+
 
 def compute_density_baseline(tile_ids: list,
                              start_date=date(year=2020, month=1, day=6),
@@ -83,8 +85,10 @@ if __name__ == "__main__":
     TOKEN_URL = "https://consent.swisscom.com/o/oauth2/token"
     MAX_NB_TILES_REQUEST = 100
     headers = {"scs-version": "2"}  # API version
-    client_id = "" # customer key in the Swisscom digital market place
-    client_secret = "" # customer secret in the Swisscom digital market place
+    client_id = CLIENT_CRED['ID']  # customer key in the Swisscom digital market place
+    client_secret = CLIENT_CRED['SECRET']  # customer secret in the Swisscom digital market place
+
+
 
     assert client_id, "client id not defined"
     assert client_secret, "client_secret not defined"

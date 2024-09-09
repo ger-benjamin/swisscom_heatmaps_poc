@@ -1,7 +1,7 @@
-# Swisscom Mobility Insights Platform (MIP)
+# Swisscom heatmaps POC
 
-We share code that helps our users use our APIs. 
+Based on Swisscom Mobility Insights Platform (MIP)
 
-Heatmaps API: https://digital.swisscom.com/products/heatmaps
+Aim: display Swisscom heatmap in an Openlayers layer dynamicaly.
 
-Article about using heatmaps API to describe the density evolution in CH https://mkafsi.medium.com/mobility-evolution-in-switzerland-in-times-of-covid-19-2fa3ceaa778?source=friends_link&sk=a4fd1e367fb1b6bda25818484531b77d
+Do not try to use it for now.

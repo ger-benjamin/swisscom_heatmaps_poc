@@ -1,4 +1,6 @@
 import json
+from urllib import request
+
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta
@@ -24,8 +26,10 @@ def get_dwell_density(postal_code:int, day:int, time: int):
     # Get all the first MAX_NB_TILES_REQUEST tile ids associated with the postal code of interest
     muni_tiles_json = oauth.get(
         BASE_URL + "/grids/postal-code-areas/{0}".format(postal_code), headers=headers
-    ).json()
-    tile_ids = [t["tileId"] for t in muni_tiles_json["tiles"]][
+    )
+    if muni_tiles_json.status_code != 200:
+        return muni_tiles_json.status_code
+    tile_ids = [t["tileId"] for t in muni_tiles_json.json()["tiles"]][
         :MAX_NB_TILES_REQUEST
     ]
 
@@ -39,7 +43,8 @@ def get_dwell_density(postal_code:int, day:int, time: int):
         + "&tiles=".join(map(str, tile_ids))
     )
     result = oauth.get(api_request, headers=headers)
-    print(result.status_code)
+    if result.status_code != 200:
+        return result.status_code
     content = result.json()
     geo_content = {
         "type": "FeatureCollection",

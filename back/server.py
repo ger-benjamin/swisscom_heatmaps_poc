@@ -1,4 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
+
+from pandas.core.dtypes.inference import is_number
+
 from swisscom.entry import Entry
 from json import dumps
 from urllib.parse import urlparse, parse_qs
@@ -37,12 +40,20 @@ class MyHttpRequestHandler(BaseHTTPRequestHandler):
         self.set_common_headers()
 
 
+    def return_no_data(self, status_code):
+        self.send_response(status_code)
+        self.set_common_headers()
+
+
     def do_GET(self):
         print(f"Got a GET request on path: {self.path}")
         url = urlparse(self.path)
         if url.path == PATHS['dwell-density']:
             params = parse_qs(url.query)
             response = entry.get_dwell_density(int(params['postal_code'][0]), int(params['day'][0]), int(params['time'][0]))
+            if is_number(response) and response != 200:
+                self.return_no_data(response)
+                return
             self.set_json_response(response)
             self.wfile.write(response.encode('utf-8'))
         if url.path == PATHS['kml']:

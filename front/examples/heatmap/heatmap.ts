@@ -103,6 +103,12 @@ time.addEventListener('input', () => {
 
 const fetchGeoJson = async (postalCode: number, daytime: [number, number] ): Promise<Record<string, unknown>> => {
   const result = await fetch(`http://localhost:8000/dwell-density.json?postal_code=${postalCode}&day=${daytime[0]}&time=${daytime[1]}`)
+    .then((response) => {
+      if (response.status !== 200) {
+        throw `Status code is ${response.status}`;
+      }
+      return response
+    })
     .then((response) => response.json())
     .catch((error) => {
       console.error('Error:', error);
@@ -119,15 +125,17 @@ const geoJsonFormat = new GeoJSON({
 request.addEventListener('click', async () => {
   const dayTime = getDayTimeValue();
   const pCode = parseInt(postalCode.value, 10);
-  const text = `Request dwell density on ${dayTime[0]}.10.22 at ${dayTime[1]}:00`;
-  messageText.textContent = text;
+  messageText.textContent = `Request dwell density on ${dayTime[0]}.10.22 at ${dayTime[1]}:00`;
   const result = await fetchGeoJson(pCode, dayTime);
+  vectorSource.clear();
+  if (!result) {
+    return;
+  }
   const features = geoJsonFormat.readFeatures(result).map(feature => {
     const coord = (feature.getGeometry() as Point).getCoordinates();
     const reproj = transform(coord, epsg21781.getCode(), 'EPSG:3857')
     feature.setGeometry(new Point(reproj))
     return feature;
   })
-  vectorSource.clear();
   vectorSource.addFeatures(features);
 });

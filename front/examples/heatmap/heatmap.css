@@ -3,6 +3,10 @@
   width: 600px;
 }
 
+form {
+  margin: 1rem 0;
+}
+
 #console {
   width: 600px;
   background-color: whitesmoke;

@@ -1,5 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+from httmock import response
 from pandas.core.dtypes.inference import is_number
 
 from swisscom.entry import Entry
@@ -9,7 +10,8 @@ from urllib.parse import urlparse, parse_qs
 PORT = 8000
 PATHS = {
     'kml': '/2012_Earthquakes_Mag5.kml',
-    'dwell-density': '/dwell-density.json'
+    'dwell-density': '/dwell-density.json',
+    'dwell-demographics': '/dwell-demographics.json',
 }
 entry = None
 
@@ -48,20 +50,25 @@ class MyHttpRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         print(f"Got a GET request on path: {self.path}")
         url = urlparse(self.path)
-        if url.path == PATHS['dwell-density']:
-            params = parse_qs(url.query)
-            response = entry.get_dwell_density(int(params['postal_code'][0]), int(params['day'][0]), int(params['time'][0]))
-            if is_number(response) and response != 200:
-                self.return_no_data(response)
-                return
-            self.set_json_response(response)
-            self.wfile.write(response.encode('utf-8'))
+        params = parse_qs(url.query)
+        response = 404
         if url.path == PATHS['kml']:
             file_path = 'data/2012_Earthquakes_Mag5.kml'
             with open(file_path, 'r') as file:
                 content = file.read()
             self.set_kml_response(content)
             self.wfile.write(content.encode('utf-8'))
+            return
+        if url.path == PATHS['dwell-density']:
+            response = entry.get_dwell_density(int(params['postal_code'][0]), int(params['day'][0]), int(params['time'][0]))
+        if url.path == PATHS['dwell-demographics']:
+            response = entry.get_dwell_demographics(int(params['postal_code'][0]), int(params['day'][0]), int(params['time'][0]))
+        if is_number(response) and response != 200:
+            self.return_no_data(response)
+            return
+        self.set_json_response(response)
+        self.wfile.write(response.encode('utf-8'))
+
 
 
 if __name__ == '__main__':

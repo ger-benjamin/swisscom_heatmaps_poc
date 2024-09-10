@@ -8,6 +8,8 @@ import { proj as epsg21781 } from '@geoblocks/proj/src/EPSG_21781.js';
 import { OSM } from 'ol/source';
 import {transform} from "ol/proj";
 import {Point} from "ol/geom";
+import {Feature} from "ol/render/webgl/MixedGeometryBatch";
+import {extend, Extent, createEmpty, isEmpty, buffer} from "ol/extent";
 
 const message = document.getElementById('console');
 const messageText = message.getElementsByClassName('text')[0];
@@ -53,6 +55,7 @@ const vector = new HeatmapLayer({
   source: vectorSource,
   blur: parseInt(blur.value, 10),
   radius: parseInt(radius.value, 10),
+  opacity: 0.8,
   weight: function (feature) {
     const score = parseInt(feature.get('score'));
     return score / 100;
@@ -61,16 +64,19 @@ const vector = new HeatmapLayer({
 
 const raster = new TileLayer({
   source: new OSM(),
+  className: 'raster'
+});
+
+const view = new View({
+  center: [914099, 5919982],
+  zoom: 7,
+  projection: 'EPSG:3857'
 });
 
 new Map({
   layers: [raster, vector],
   target: 'map',
-  view: new View({
-    center: [914099, 5919982],
-    zoom: 7,
-    projection: 'EPSG:3857'
-  }),
+  view: view,
 });
 
 const getDayTimeValue = (): [number, number] => {
@@ -91,9 +97,24 @@ radius.addEventListener('input', () => {
   radiusLabel.textContent = value.toString();
 });
 
-day.addEventListener('input', () => {
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const getDayName = (dateTxt: string): string => {
+  const date = new Date(dateTxt);
+  return days[date.getDay()];
+};
+
+const getDateLabel = (): string => {
   const value = getDayTimeValue()[0];
-  dayLabel.textContent = value.toString();
+  const dayName = getDayName(`2022.10.${value}`);
+  return `${dayName} ${value.toString()}.10.2022`
+}
+
+const updateDateLabel = () => {
+  dayLabel.textContent = getDateLabel();
+}
+
+day.addEventListener('input', () => {
+  updateDateLabel();
 });
 
 time.addEventListener('input', () => {
@@ -122,10 +143,27 @@ const geoJsonFormat = new GeoJSON({
   //featureProjection: epsg21781.getCode(),
 });
 
+const getFeaturesExtent = (
+  features: Feature[]
+): Extent | null => {
+  const extent =
+      features.reduce(
+          (currentExtent, feature) =>
+              extend(currentExtent, feature.getGeometry()?.getExtent() ?? []),
+          createEmpty()
+      ) ?? null;
+  return extent && !isEmpty(extent) ? extent : null;
+};
+
+const zoomToFeatures = () => {
+  const extent = getFeaturesExtent(vectorSource.getFeatures());
+  view.fit(buffer(extent, 200));
+}
+
 request.addEventListener('click', async () => {
   const dayTime = getDayTimeValue();
   const pCode = parseInt(postalCode.value, 10);
-  messageText.textContent = `Request dwell density on ${dayTime[0]}.10.22 at ${dayTime[1]}:00`;
+  messageText.textContent = `Request dwell density on ${getDateLabel()} at ${dayTime[1]}:00`;
   const result = await fetchGeoJson(pCode, dayTime);
   vectorSource.clear();
   if (!result) {
@@ -138,4 +176,7 @@ request.addEventListener('click', async () => {
     return feature;
   })
   vectorSource.addFeatures(features);
+  zoomToFeatures();
 });
+
+updateDateLabel();

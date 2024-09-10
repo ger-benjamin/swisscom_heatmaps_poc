@@ -16,3 +16,7 @@
   margin: 0;
   padding: 0.5rem;
 }
+
+.raster {
+  filter: grayscale(50%);
+}

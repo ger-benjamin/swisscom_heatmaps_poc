@@ -1,6 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from swisscom.entry import Entry
 from json import dumps
+from urllib.parse import urlparse, parse_qs
 
 PORT = 8000
 PATHS = {
@@ -38,11 +39,13 @@ class MyHttpRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         print(f"Got a GET request on path: {self.path}")
-        if self.path == PATHS['dwell-density']:
-            response = entry.get_dwell_density()
+        url = urlparse(self.path)
+        if url.path == PATHS['dwell-density']:
+            params = parse_qs(url.query)
+            response = entry.get_dwell_density(int(params['postal_code'][0]), int(params['day'][0]), int(params['time'][0]))
             self.set_json_response(response)
             self.wfile.write(response.encode('utf-8'))
-        if self.path == PATHS['kml']:
+        if url.path == PATHS['kml']:
             file_path = 'data/2012_Earthquakes_Mag5.kml'
             with open(file_path, 'r') as file:
                 content = file.read()

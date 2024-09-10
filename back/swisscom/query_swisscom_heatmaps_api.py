@@ -1,11 +1,7 @@
 import json
-from pyexpat import features
-
-from fontTools.colorLib import geometry
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta
-import pprint
 from swisscom.tile_id_to_coordinates import tile_id_to_ll
 
 from env import CLIENT_CRED
@@ -17,7 +13,8 @@ headers = {"scs-version": "2"}  # API version
 client_id = CLIENT_CRED['ID']  # customer key in the Swisscom digital market place
 client_secret = CLIENT_CRED['SECRET']  # customer secret in the Swisscom digital market place
 
-def get_dwell_density():
+def get_dwell_density(postal_code:int, day:int, time: int):
+    print(postal_code, day, time)
     # Fetch an access token
     client = BackendApplicationClient(client_id=client_id)
     oauth = OAuth2Session(client=client)
@@ -25,7 +22,6 @@ def get_dwell_density():
                       client_secret=client_secret)
 
     # Get all the first MAX_NB_TILES_REQUEST tile ids associated with the postal code of interest
-    postal_code = 1003
     muni_tiles_json = oauth.get(
         BASE_URL + "/grids/postal-code-areas/{0}".format(postal_code), headers=headers
     ).json()
@@ -33,14 +29,12 @@ def get_dwell_density():
         :MAX_NB_TILES_REQUEST
     ]
 
-    # define a start time and request the density for the following given number of hours
-    start_time = datetime(year=2022, month=10, day=10, hour=0, minute=0)
-    dates = [(start_time + timedelta(hours=delta)) for delta in range(24)]
-    date2score = dict()
+    start_time = datetime(year=2022, month=10, day=day, hour=0, minute=0)
+    date = start_time + timedelta(hours=time)
 
     api_request = (
         BASE_URL
-        + "/heatmaps/dwell-density/hourly/{0}".format(dates[0].isoformat())
+        + "/heatmaps/dwell-density/hourly/{0}".format(date.isoformat())
         + "?tiles="
         + "&tiles=".join(map(str, tile_ids))
     )
@@ -62,6 +56,11 @@ def get_dwell_density():
             }
         })
     return json.dumps(geo_content)
+
+    # define a start time and request the density for the following given number of hours
+    # start_time = datetime(year=2022, month=10, day=10, hour=0, minute=0)
+    # dates = [(start_time + timedelta(hours=delta)) for delta in range(24)]
+    # date2score = dict()
 
     # for dt in dates:
     #     api_request = (

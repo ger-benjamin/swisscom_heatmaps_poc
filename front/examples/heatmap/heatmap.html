@@ -21,9 +21,9 @@
       <div class="input">
         <label for="blur">
           <span>Blur size:&nbsp;</span>
-          <span id="blur-label">15</span>
+          <span id="blur-label">10</span>
         </label>
-        <input id="blur" type="range" min="1" max="50" step="1" value="15" />
+        <input id="blur" type="range" min="1" max="50" step="1" value="10" />
       </div>
       <div class="input">
         <label for="day">
@@ -40,6 +40,12 @@
           <span>:00</span>
         </label>
         <input id="time" type="range" min="0" max="23" step="1" value="3" />
+      </div>
+      <div class="input">
+        <label for="postal-code">
+          <span>Postal code: &nbsp;</span>
+        </label>
+        <input id="postal-code" type="number" min="1000" max="9999" value="1003" />
       </div>
       <div class="input">
         <button id="request" type="button">Request</button>

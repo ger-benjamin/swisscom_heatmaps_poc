@@ -19,6 +19,7 @@ const day = document.getElementById('day') as HTMLInputElement;
 const dayLabel = document.getElementById('day-label');
 const time = document.getElementById('time') as HTMLInputElement;
 const timeLabel = document.getElementById('time-label');
+const postalCode = document.getElementById('postal-code') as HTMLInputElement;
 const request = document.getElementById('request') as HTMLInputElement;
 
 const kmlSource = new VectorSource({
@@ -100,8 +101,8 @@ time.addEventListener('input', () => {
   timeLabel.textContent = value.toString();
 });
 
-const fetchGeoJson = async () => {
-  const result = await fetch('http://localhost:8000/dwell-density.json')
+const fetchGeoJson = async (postalCode: number, daytime: [number, number] ): Promise<Record<string, unknown>> => {
+  const result = await fetch(`http://localhost:8000/dwell-density.json?postal_code=${postalCode}&day=${daytime[0]}&time=${daytime[1]}`)
     .then((response) => response.json())
     .catch((error) => {
       console.error('Error:', error);
@@ -116,10 +117,11 @@ const geoJsonFormat = new GeoJSON({
 });
 
 request.addEventListener('click', async () => {
-  const value = getDayTimeValue();
-  const text = `Request dwell density on ${value[0]}.10.22 at ${value[1]}:00`;
+  const dayTime = getDayTimeValue();
+  const pCode = parseInt(postalCode.value, 10);
+  const text = `Request dwell density on ${dayTime[0]}.10.22 at ${dayTime[1]}:00`;
   messageText.textContent = text;
-  const result = await fetchGeoJson();
+  const result = await fetchGeoJson(pCode, dayTime);
   const features = geoJsonFormat.readFeatures(result).map(feature => {
     const coord = (feature.getGeometry() as Point).getCoordinates();
     const reproj = transform(coord, epsg21781.getCode(), 'EPSG:3857')

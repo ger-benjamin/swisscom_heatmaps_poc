@@ -1,7 +1,12 @@
+import json
+from pyexpat import features
+
+from fontTools.colorLib import geometry
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta
 import pprint
+from swisscom.tile_id_to_coordinates import tile_id_to_ll
 
 from env import CLIENT_CRED
 
@@ -33,24 +38,49 @@ def get_dwell_density():
     dates = [(start_time + timedelta(hours=delta)) for delta in range(24)]
     date2score = dict()
 
-    for dt in dates:
-        api_request = (
-            BASE_URL
-            + "/heatmaps/dwell-density/hourly/{0}".format(dt.isoformat())
-            + "?tiles="
-            + "&tiles=".join(map(str, tile_ids))
-        )
-        result = oauth.get(api_request, headers=headers)
-        print(result.status_code)
-        print(result.json())
-        daily_total_density = sum(
-            map(
-                lambda t: t["score"],
-                result.json()["tiles"],
-            )
-        )
-        date2score[dt.isoformat()] = daily_total_density
-    return date2score
+    api_request = (
+        BASE_URL
+        + "/heatmaps/dwell-density/hourly/{0}".format(dates[0].isoformat())
+        + "?tiles="
+        + "&tiles=".join(map(str, tile_ids))
+    )
+    result = oauth.get(api_request, headers=headers)
+    print(result.status_code)
+    content = result.json()
+    geo_content = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    for element in content["tiles"]:
+        coordinate = tile_id_to_ll(element["tileId"])
+        geo_content["features"].append({
+            "type": "Feature",
+            "properties": {"score": element["score"]},
+            "geometry": {
+                "type": "Point",
+                "coordinates": list(coordinate)
+            }
+        })
+    return json.dumps(geo_content)
+
+    # for dt in dates:
+    #     api_request = (
+    #         BASE_URL
+    #         + "/heatmaps/dwell-density/hourly/{0}".format(dt.isoformat())
+    #         + "?tiles="
+    #         + "&tiles=".join(map(str, tile_ids))
+    #     )
+    #     result = oauth.get(api_request, headers=headers)
+    #     print(result.status_code)
+    #     print(result.json())
+    #     daily_total_density = sum(
+    #         map(
+    #             lambda t: t["score"],
+    #             result.json()["tiles"],
+    #         )
+    #     )
+    #     date2score[dt.isoformat()] = daily_total_density
+    # return date2score
 
   # # print the daily density for every date
   # print("The average hourly density for postal code {0}".format(postal_code))

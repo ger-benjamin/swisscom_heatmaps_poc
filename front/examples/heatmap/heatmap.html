@@ -11,10 +11,39 @@
     <p>Simple heatmap example.</p>
     <div id="map"></div>
     <form>
-      <label for="radius">radius size</label>
-      <input id="radius" type="range" min="1" max="50" step="1" value="5" />
-      <label for="blur">blur size</label>
-      <input id="blur" type="range" min="1" max="50" step="1" value="15" />
+      <div class="input">
+        <label for="radius">
+          <span>Radius size:&nbsp;</span>
+          <span id="radius-label">5</span>
+        </label>
+        <input id="radius" type="range" min="1" max="50" step="1" value="5" />
+      </div>
+      <div class="input">
+        <label for="blur">
+          <span>Blur size:&nbsp;</span>
+          <span id="blur-label">15</span>
+        </label>
+        <input id="blur" type="range" min="1" max="50" step="1" value="15" />
+      </div>
+      <div class="input">
+        <label for="day">
+          <span>Date:&nbsp;</span>
+          <span id="day-label">3</span>
+          <span>.10.2022</span>
+        </label>
+        <input id="day" type="range" min="3" max="16" step="1" value="3" />
+      </div>
+      <div class="input">
+        <label for="time">
+          <span>Time:&nbsp;</span>
+          <span id="time-label">3</span>
+          <span>:00</span>
+        </label>
+        <input id="time" type="range" min="0" max="23" step="1" value="3" />
+      </div>
+      <div class="input">
+        <button id="request" type="button">Request</button>
+      </div>
     </form>
     <div id="console">
       <p class="title">Output message:</p>

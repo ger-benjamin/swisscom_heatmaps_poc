@@ -25,7 +25,7 @@ class MyHttpRequestHandler(BaseHTTPRequestHandler):
     def set_json_response(self, response):
         self.send_response(200)
         self.send_header("Content-type", "application/json")
-        self.send_header("Content-Length", str(len(dumps(response))))
+        self.send_header("Content-Length", len(response))
         self.set_common_headers()
 
 
@@ -41,7 +41,7 @@ class MyHttpRequestHandler(BaseHTTPRequestHandler):
         if self.path == PATHS['dwell-density']:
             response = entry.get_dwell_density()
             self.set_json_response(response)
-            self.wfile.write(str(response).encode('utf8'))
+            self.wfile.write(response.encode('utf-8'))
         if self.path == PATHS['kml']:
             file_path = 'data/2012_Earthquakes_Mag5.kml'
             with open(file_path, 'r') as file:

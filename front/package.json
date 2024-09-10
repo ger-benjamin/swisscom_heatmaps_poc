@@ -22,6 +22,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
+    "@geoblocks/proj": "^0.4.10",
     "ol": "^10.1.0"
   },
   "devDependencies": {

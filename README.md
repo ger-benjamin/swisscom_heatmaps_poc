@@ -24,8 +24,10 @@ CLIENT_CRED = {
     'ID': "",
     'SECRET': ""
 }
+# Free plan limited:
 BASE_MONTH = 10
 BASE_YEAR = 2022
+MAX_NB_TILES_REQUEST = 100
 ```
 
 Then run: `python3 server.py`. The api will be available at `localhost:8000/`

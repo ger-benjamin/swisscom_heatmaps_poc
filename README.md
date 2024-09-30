@@ -38,4 +38,14 @@ BASE_MONTH = 10
 BASE_YEAR = 2022
 MAX_NB_TILES_REQUEST = 100
 ```
+## TODO
 
+ - Make it works... (yep)
+ - Filter accepted hosts
+ - Return true GeoJson
+ - Explain / better views regarding the Swisscom API
+   - Use open api?
+ - Add a CI
+ - push image?
+ - Add cache?
+ - More OGC like api?

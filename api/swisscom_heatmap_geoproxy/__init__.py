@@ -9,11 +9,11 @@ LOG = logging.getLogger(__name__)
 
 
 def main(global_config, **settings):
-    LOG.warning("setup main")
     config = Configurator(settings=settings)
     config.include("c2cwsgiutils.pyramid")
     config.scan("swisscom_heatmap_geoproxy.views")
 
     # Initialize the health checks
     health_check = HealthCheck(config)
-    LOG.warning("main is set up")
+    LOG.info("swisscom_heatmap_geoapi is now up")
+    return config.make_wsgi_app()

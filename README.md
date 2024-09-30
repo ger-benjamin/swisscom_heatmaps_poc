@@ -41,7 +41,6 @@ MAX_NB_TILES_REQUEST=100
 
 ## TODO
 
- - Make it works... (yep)
  - Filter accepted hosts
  - Return true GeoJson
  - Explain / better views regarding the Swisscom API

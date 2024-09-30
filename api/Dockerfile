@@ -24,8 +24,6 @@ RUN pip3 install --no-cache-dir -e . && \
     black swisscom_heatmap_geoproxy --check && \
     python3 -m compileall -q .
 
-CMD ["gunicorn", "--paste=/app/production.ini"]
-
 # Default values for the environment variables
 ENV \
   DEVELOPMENT=0 \
@@ -41,3 +39,5 @@ ENV \
   SQL_LOG_LEVEL=WARNING \
   C2CWSGIUTILS_LOG_LEVEL=WARNING \
   LOG_LEVEL=INFO
+
+CMD ["gunicorn", "--paste=/app/production.ini"]

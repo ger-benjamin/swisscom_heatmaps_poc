@@ -69,13 +69,13 @@ def get_params(request: request.Request) -> Tuple[int, datetime]:
     return postal_code, date_time
 
 
-@swisscom_heatmap_dwell_density.get(renderer="json")
+@swisscom_heatmap_dwell_density.get(renderer="geojson")
 def entry_get_dwell_density(request: request.Request) -> request.Response:
     postal_code, date_time = get_params(request)
     return api.get_dwell_density(postal_code, date_time)
 
 
-@swisscom_heatmap_dwell_demographics.get(renderer="json")
+@swisscom_heatmap_dwell_demographics.get(renderer="geojson")
 def entry_get_dwell_demographics(request: request.Request) -> request.Response:
     postal_code, date_time = get_params(request)
     return api.get_dwell_demographics(postal_code, date_time)

@@ -38,9 +38,9 @@ class SwisscomHeatmapApi:
     def parse_date_time(date_time: str) -> datetime:
         return datetime.strptime(date_time, "%d.%m.%YT%H:%M")
 
-    def get_config(self) -> str:
+    def get_config(self) -> dict:
         config = {"minDate": f"{MIN_DATE}", "maxDate": f"{MAX_DATE}"}
-        return json.dumps(config)
+        return config
 
     def auth(self) -> OAuth2Session:
         # Fetch an access token
@@ -77,7 +77,7 @@ class SwisscomHeatmapApi:
             + "&tiles=".join(map(str, tile_ids))
         )
 
-    def response_to_geojson_result(self, data: dict[str, Any]) -> str:
+    def response_to_geojson_result(self, data: dict[str, Any]) -> dict:
         geo_content = {"type": "FeatureCollection", "features": []}
         for element in data["tiles"]:
             coordinate = tile_id_to_ll(element["tileId"])
@@ -88,7 +88,7 @@ class SwisscomHeatmapApi:
                     "geometry": {"type": "Point", "coordinates": list(coordinate)},
                 }
             )
-        return json.dumps(geo_content)
+        return geo_content
 
     def get_dwell_density(self, postal_code: int, date_time: datetime) -> Response:
         self.error = None

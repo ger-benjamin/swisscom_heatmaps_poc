@@ -1,0 +1,14 @@
+services:
+  wsgi:
+    image: camptocamp/swisscom_heatmap_geoproxy_wsgi:latest
+    environment:
+      - DEVELOPMENT=0 \
+      - SWISSCOM_CLIENT_ID=${SWISSCOM_CLIENT_ID}
+      - SWISSCOM_CLIENT_SECRET=${SWISSCOM_CLIENT_SECRET}
+      # - MIN_DATE=03.10.2022
+      # - MAX_DATE=16.10.2022
+      # - MAX_NB_TILES_REQUEST=100
+      # - GUNICORN_CMD_ARGS: -b :8080 --worker-class gthread --threads 10 --workers 2 --reload # Uncomment me for debug purpose
+    ports:
+      - "8080:8080"
+

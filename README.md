@@ -6,42 +6,36 @@ Aim: display Swisscom heatmap in an Openlayers layer dynamically.
 
 Do not try to use it for now.
 
-## Run it
+## Run POC
 
-You need to run the frontend and the backend separately.
+If you want a quick frontend/backend demo, checkout the poc branch.
 
-### Backend
-
-```
-cd back
-```
+## Run backend
 
 Set up your OAuth credentials and variable.
-Create a file `env.py` here, in the `back` folder, with this content:
+Create a file `.env` at the root of the project with this content:
 
 ```
-CLIENT_CRED = {
-    'ID': "",
-    'SECRET': ""
-}
-# Free plan limited:
+SWISSCOM_CLIENT_ID=xxx
+SWISSCOM_CLIENT_SECRET=xxx
+```
+
+Run then
+
+```
+make build-all
+docker compose up
+```
+
+The api will be available at `localhost:8000/`
+
+## Config
+
+In the `docker-compose.yaml` file, you can also set these env:
+
+``
 BASE_MONTH = 10
 BASE_YEAR = 2022
 MAX_NB_TILES_REQUEST = 100
 ```
 
-Then run: `python3 server.py`. The api will be available at `localhost:8000/`
-
-## Front
-
-Go in the front directory, install and run the examples:
-
-```
-cd front
-npm install
-npm run start
-```
-
-You can access the example at http://localhost:1234/heatmap/heatmap.html
-
-Note: You may have to adapt the BASE_MONTH and BASE_YEAR in the example.

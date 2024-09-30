@@ -33,11 +33,12 @@ The api will be available at `localhost:8000/`
 
 In the `docker-compose.yaml` file, you can also set these env:
 
-``
-BASE_MONTH = 10
-BASE_YEAR = 2022
-MAX_NB_TILES_REQUEST = 100
 ```
+BASE_MONTH=10
+BASE_YEAR=2022
+MAX_NB_TILES_REQUEST=100
+```
+
 ## TODO
 
  - Make it works... (yep)
